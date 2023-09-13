@@ -1,0 +1,28 @@
+name: Build
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    env:
+      RELEASE_FILENAME: ${{ github.event.repository.name }}-${{ github.ref_name }}.zip
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build
+        run: cd src && zip -r ../"$RELEASE_FILENAME" .
+
+      - name: Release
+        uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v0.1.15
+        with:
+          files: ${{ env.RELEASE_FILENAME }}
